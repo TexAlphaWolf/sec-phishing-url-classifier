@@ -14,6 +14,8 @@ from urlclf.model import Model, verdict
 
 MAX_BODY = 256 * 1024
 MAX_URLS = 200
+DRAIN = 1024 * 1024  # an oversized body is read and thrown away up to this much, so the client
+# can finish sending and read the 413 (on Windows it would otherwise see a reset connection)
 
 
 def score_dict(model: Model, url: str, top: int = 5) -> dict[str, Any]:
@@ -57,6 +59,13 @@ def make_server(model: Model, host: str = "127.0.0.1", port: int = 8080) -> Thre
             except ValueError:
                 length = -1
             if length < 0 or length > MAX_BODY:
+                left = min(max(length, 0), DRAIN)
+                while left > 0:
+                    chunk = self.rfile.read(min(left, 65536))
+                    if not chunk:
+                        break
+                    left -= len(chunk)
+                self.close_connection = True
                 self._send(413 if length > MAX_BODY else 411, {"error": "bad or too large body"})
                 return
             try:

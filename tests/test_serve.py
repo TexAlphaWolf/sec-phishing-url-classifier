@@ -69,3 +69,11 @@ def test_limits_and_unknown_paths(base):
 def test_oversized_body_refused(base):
     status, _ = post(base, b"x" * (300 * 1024), raw=True)
     assert status == 413
+
+
+def test_body_beyond_the_drain_limit_never_hangs_or_succeeds(base):
+    try:
+        status, _ = post(base, b"x" * (3 * 1024 * 1024), raw=True)
+    except OSError:  # the server cut the connection: also a refusal
+        return
+    assert status == 413
