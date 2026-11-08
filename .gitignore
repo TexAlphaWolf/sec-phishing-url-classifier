@@ -1,0 +1,23 @@
+# Secrets and local data: never publish
+.env
+*.key
+*.pem
+secrets/
+*.db
+*.sqlite
+# Datasets are downloaded by the user, never committed (see docs/evaluation.md)
+datasets/
+work/
+
+__pycache__/
+*.pyc
+*.egg-info/
+.venv/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+build/
+dist/
+.idea/
+.vscode/

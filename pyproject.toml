@@ -1,0 +1,74 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "urlclf"
+version = "1.0.0"
+description = "Scores a URL for phishing from the text of the URL alone: lexical features, a linear model stored as plain JSON, a measured evaluation."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.11"
+# Scoring needs nothing but the standard library. Training needs scikit-learn (extra "train").
+dependencies = []
+
+[project.optional-dependencies]
+train = [
+  "scikit-learn>=1.5",
+  "numpy>=1.26",
+]
+dev = [
+  "urlclf[train]",
+  "pytest>=8",
+  "pytest-cov>=5",
+  "ruff>=0.4",
+  "mypy>=1.10",
+  "playwright>=1.45",  # only to render the README screenshot
+]
+
+[project.scripts]
+urlclf = "urlclf.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+urlclf = ["data/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+filterwarnings = ["error"]
+
+[tool.coverage.run]
+source = ["urlclf"]
+branch = true
+omit = ["*/__main__.py"]
+
+[tool.coverage.report]
+fail_under = 90
+show_missing = true
+skip_covered = true
+
+[tool.mypy]
+python_version = "3.11"
+files = ["src"]
+strict = true
+warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = ["sklearn", "sklearn.*", "numpy", "numpy.*", "scipy", "scipy.*"]
+ignore_missing_imports = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
+
+[tool.ruff.lint.per-file-ignores]
+"src/*" = ["E501"]
+"tests/*" = ["E501", "RUF001", "RUF003"]
+"tools/*" = ["E501", "E402"]

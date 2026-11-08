@@ -1,0 +1,8 @@
+https://www.example.org/docs/index.html
+https://accounts.example.com/signin
+http://paypal.com.secure-login-x9.example.net/verify/12345.php
+http://login-paypal-secure.com/
+http://203.0.113.7/login.php
+http://xk3j9qz2vv8.com/
+https://bit.ly/3AbCdEf
+http://user:pass@bank-update-24.com:8081/confirm
